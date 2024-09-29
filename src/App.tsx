@@ -1,4 +1,4 @@
-import {BrowserRouter, HashRouter, Route, Routes} from "react-router-dom";
+import {HashRouter, Route, Routes} from "react-router-dom";
 import {RootLayout} from "@/layouts/main.tsx";
 import {JsonTransformPage} from "@/pages/json-transform.tsx";
 

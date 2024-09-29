@@ -4,16 +4,16 @@ import {JsonTransformPage} from "@/pages/json-transform.tsx";
 
 
 function App() {
-  return (
-    <HashRouter>
-      <Routes>
-          <Route path="/" element={<RootLayout />}>
-            <Route index element={<JsonTransformPage />}/>
-          </Route>
-      </Routes>
+    return (
+        <HashRouter>
+            <Routes>
+                <Route path="/" element={<RootLayout/>}>
+                    <Route index element={<JsonTransformPage/>}/>
+                </Route>
+            </Routes>
 
-    </HashRouter >
-  )
+        </HashRouter>
+    )
 }
 
 export default App

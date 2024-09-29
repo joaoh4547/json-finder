@@ -9,11 +9,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
+# Set proper GITHUB_TOKEN permissions
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write     # Permissão de escrita
+  pages: write        # Permissão para páginas
+  id-token: write     # Necessário para deploy
 
 # Allow one concurrent deployment
 concurrency:
@@ -33,10 +33,9 @@ jobs:
 
       - name: Set up Git user
         run: |
-          git config --global user.name "João Henrique Teixeira de Jesus"
+          git config --global user.name "João Henrique"
           git config --global user.email "joaohenriquetdj@gmail.com"
 
-      # Aqui configuramos o repositório remoto para usar o GITHUB_TOKEN
       - name: Setup remote repository with GitHub Token
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git

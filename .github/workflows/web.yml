@@ -36,6 +36,11 @@ jobs:
           git config --global user.name "João Henrique Teixeira de Jesus"
           git config --global user.email "joaohenriquetdj@gmail.com"
 
+      # Aqui configuramos o repositório remoto para usar o GITHUB_TOKEN
+      - name: Setup remote repository with GitHub Token
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

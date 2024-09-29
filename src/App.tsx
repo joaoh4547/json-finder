@@ -11,6 +11,7 @@ function App() {
             <Route index element={<JsonTransformPage />}/>
           </Route>
       </Routes>
+
     </HashRouter >
   )
 }

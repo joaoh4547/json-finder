@@ -1,17 +1,17 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, HashRouter, Route, Routes} from "react-router-dom";
 import {RootLayout} from "@/layouts/main.tsx";
 import {JsonTransformPage} from "@/pages/json-transform.tsx";
 
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
           <Route path="/" element={<RootLayout />}>
             <Route index element={<JsonTransformPage />}/>
           </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter >
   )
 }
 

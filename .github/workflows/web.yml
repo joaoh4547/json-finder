@@ -31,10 +31,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Git user
+      - name: Set up Git user from commit author
         run: |
-          git config --global user.name "João Henrique"
-          git config --global user.email "joaohenriquetdj@gmail.com"
+          git config --global user.name "${{ github.actor }}"  # Usa o autor do commit
+          git config --global user.email "${{ github.event.head_commit.committer.email }}"  # Usa o e-mail do commit
 
       - name: Setup remote repository with GitHub Token
         run: |

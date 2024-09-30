@@ -45,6 +45,9 @@ echo "Nova versão: $new_version"
 update_package_json "$new_version"
 echo "package.json atualizado para a nova versão: $new_version"
 
+echo ${PAT_TOKEN}
+echo ${PAT_REPO}
+
 # Configura o git
 
 git config --global user.email "action@github.com"

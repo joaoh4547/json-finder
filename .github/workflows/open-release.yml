@@ -31,7 +31,12 @@ jobs:
           echo "Current version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Incrementar versão do minor
+      - name: Criar branch de release
+        run: |
+          git checkout -b release-${{ env.VERSION }}
+          git push origin release-${{ env.VERSION }}
+
+      - name: Incrementar versão
         run: |
           IFS='.' read -r major minor patch <<< "${{ env.VERSION }}"
           new_minor=$((minor + 1))

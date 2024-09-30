@@ -32,6 +32,7 @@ create_release_branch() {
 git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${PAT_REPO}.git
 
 git pull origin develop
+git checkout develop
 
 
 # Início do script

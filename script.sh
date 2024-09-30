@@ -30,6 +30,10 @@ create_release_branch() {
 }
 
 git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${PAT_REPO}.git
+
+git pull origin develop
+
+
 # Início do script
 echo "Iniciando o processo de abertura de versão..."
 current_version=$(get_current_version)

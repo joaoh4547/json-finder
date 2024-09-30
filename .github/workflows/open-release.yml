@@ -3,6 +3,11 @@ name: Open Release
 on:
   workflow_dispatch:  # Permite execução manual
 
+permissions:
+  contents: write     # Permissão de escrita
+  pages: write        # Permissão para páginas
+  id-token: write
+
 jobs:
   open_release:
     runs-on: ubuntu-latest

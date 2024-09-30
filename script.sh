@@ -51,8 +51,8 @@ echo ${PAT_REPO}
 
 # Configura o git
 
-git config --global user.email "joaohenriquetdj@gmail.com"
-git config --global user.name "João Henrique Teixeira de Jesus"
+git config --global user.email "action@github.com"
+git config --global user.name "GitHub Action"
 git add package.json
 git commit -m "Atualiza versão da develop para $new_version"
 

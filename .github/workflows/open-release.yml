@@ -1,0 +1,36 @@
+name: Open Release
+
+on:
+  workflow_dispatch:  # Permite execução manual
+
+jobs:
+  open_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
+
+      - name: Obter versão atual do package.json
+        id: get_version
+        run: |
+          VERSION=$(jq -r .version package.json)
+          echo "Current version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Incrementar versão
+        run: |
+          IFS='.' read -r major minor patch <<< "${{ env.VERSION }}"
+          new_version="${major}.${minor}.$((patch + 1))"
+          echo "Nova versão: $new_version"
+          jq --arg new_version "$new_version" '.version = $new_version' package.json > tmp.json && mv tmp.json package.json
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add package.json
+          git commit -m "Atualiza versão para $new_version"
+          git push origin develop
+
+      - name: Criar branch de release
+        run: |
+          git checkout -b release-${{ env.VERSION }}
+          git push origin release-${{ env.VERSION }}

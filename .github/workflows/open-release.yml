@@ -41,11 +41,15 @@ jobs:
           IFS='.' read -r major minor patch <<< "${{ env.VERSION }}"
           new_minor=$((minor + 1))
           new_version="${major}.${new_minor}.0"  # Mantém o patch em 0
-          echo "Nova versão: $new_version"
+          echo "Nova versão: $new_version"          
+
+          # Atualiza o package.json com a nova versão
           jq --arg new_version "$new_version" '.version = $new_version' package.json > tmp.json && mv tmp.json package.json
+
+          # Configura o git e faz o commit na develop
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add package.json
-          git commit -m "Atualiza versão para $new_version"
-          git push origin release-${{ env.VERSION }}
+          git commit -m "Atualiza versão da develop para $new_version"
           git push origin develop
+          

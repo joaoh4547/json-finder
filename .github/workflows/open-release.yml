@@ -19,4 +19,5 @@ jobs:
           chmod +x script.sh  # Garante que o script seja executável
           ./script.sh          # Executa o script
         env:
-          PAT_TOKEN: ${{ secrets.REPO_TOKEN }}  # Passa o token como variável de ambiente
+          PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_REPO: ${{github.repository}}

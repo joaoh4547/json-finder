@@ -2,10 +2,6 @@ name: Open Release
 
 on:
   workflow_dispatch:  # Permite execução manual
-permissions:
-  contents: write     # Permissão de escrita
-  pages: write        # Permissão para páginas
-  id-token: write
 
 jobs:
   open_release:
@@ -15,43 +11,12 @@ jobs:
       - name: Checkout develop branch
         uses: actions/checkout@v2
 
-      - name: Set up Git user from commit author
+      - name: Instalar jq
+        run: sudo apt-get install jq  # Instala jq para manipulação de JSON
+
+      - name: Executar script.sh
         run: |
-          git config --global user.name "GitHub Action"  # Usa o autor do commit
-          git config --global user.email "action@github.com"  # Usa o e-mail do commit
-
-      - name: Setup remote repository with GitHub Token
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-
-      - name: Obter versão atual do package.json
-        id: get_version
-        run: |
-          VERSION=$(jq -r .version package.json)
-          echo "Current version: $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Criar branch de release
-        run: |
-          git checkout -b release-${{ env.VERSION }}
-          git push origin release-${{ env.VERSION }}
-
-      - name: Incrementar versão
-        run: |
-          IFS='.' read -r major minor patch <<< "${{ env.VERSION }}"
-          new_minor=$((minor + 1))
-          new_version="${major}.${new_minor}.0"  # Mantém o patch em 0
-          echo "Nova versão: $new_version"
-
-          # Atualiza o package.json com a nova versão
-          jq --arg new_version "$new_version" '.version = $new_version' package.json > tmp.json && mv tmp.json package.json
-
-          # Configura o git e faz o commit na develop
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add package.json
-          git commit -m "Atualiza versão da develop para $new_version"
-          
-          # Força o push se necessário
-          git push origin develop --force || echo "Nothing to push"
-          
+          chmod +x script.sh  # Garante que o script seja executável
+          ./script.sh          # Executa o script
+        env:
+          PAT_TOKEN: ${{ secrets.REPO_TOKEN }}  # Passa o token como variável de ambiente

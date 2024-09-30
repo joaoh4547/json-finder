@@ -29,6 +29,11 @@ create_release_branch() {
     git push orgin "release-$1"
 }
 
+git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${PAT_REPO}.git
+
+git pull origin develop
+
+
 # Início do script
 echo "Iniciando o processo de abertura de versão..."
 current_version=$(get_current_version)
@@ -40,8 +45,11 @@ echo "Nova versão: $new_version"
 update_package_json "$new_version"
 echo "package.json atualizado para a nova versão: $new_version"
 
+echo ${PAT_TOKEN}
+echo ${PAT_REPO}
+
 # Configura o git
-git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${PAT_REPO}.git
+
 git config --global user.email "action@github.com"
 git config --global user.name "GitHub Action"
 git add package.json

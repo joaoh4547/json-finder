@@ -41,10 +41,7 @@ jobs:
           IFS='.' read -r major minor patch <<< "${{ env.VERSION }}"
           new_minor=$((minor + 1))
           new_version="${major}.${new_minor}.0"  # Mantém o patch em 0
-          echo "Nova versão: $new_version"
-          
-          git checkout -b release-${{ env.VERSION }}
-          git push origin release-${{ env.VERSION }}
+          echo "Nova versão: $new_version"          
 
           # Atualiza o package.json com a nova versão
           jq --arg new_version "$new_version" '.version = $new_version' package.json > tmp.json && mv tmp.json package.json

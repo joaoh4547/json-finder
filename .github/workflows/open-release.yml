@@ -2,6 +2,10 @@ name: Open Release
 
 on:
   workflow_dispatch:  # Permite execução manual
+permissions:
+  contents: write     # Permissão de escrita
+  pages: write        # Permissão para páginas
+  id-token: write
 
 jobs:
   open_release:
@@ -10,6 +14,15 @@ jobs:
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
+
+      - name: Set up Git user from commit author
+        run: |
+          git config --global user.name "GitHub Action"  # Usa o autor do commit
+          git config --global user.email "action@github.com"  # Usa o e-mail do commit
+
+      - name: Setup remote repository with GitHub Token
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
 
       - name: Obter versão atual do package.json
         id: get_version

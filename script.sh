@@ -26,7 +26,7 @@ update_package_json() {
 # Função para criar a branch de release
 create_release_branch() {
     git checkout -b "release-$1"
-    git push https://${REPO_TOKEN}@github.com/joaoh4547/json-finder.git "release-$1"
+    git push orgin "release-$1"
 }
 
 # Início do script
@@ -41,6 +41,7 @@ update_package_json "$new_version"
 echo "package.json atualizado para a nova versão: $new_version"
 
 # Configura o git
+git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${PAT_REPO}.git
 git config --global user.email "action@github.com"
 git config --global user.name "GitHub Action"
 git add package.json

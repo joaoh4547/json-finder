@@ -33,4 +33,4 @@ jobs:
           git config --global user.name "GitHub Action"
           git add package.json
           git commit -m "Atualiza versão para $new_version"
-          git push or
+          git push origin hotfix-${{ env.VERSION }}

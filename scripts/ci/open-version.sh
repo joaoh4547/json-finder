@@ -122,6 +122,5 @@ fi
 git remote set-url origin https://x-access-token:"${PAT_TOKEN}"@github.com/"${PAT_REPO}".git
 git config --global user.email "action@github.com"
 git config --global user.name "GitHub Action"
-git pull
 
 open_version_by_type

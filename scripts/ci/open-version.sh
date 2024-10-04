@@ -71,6 +71,8 @@ open_version_by_type(){
 
 open_hotfix_version(){
   new_version=$(increment_version "minor")
+  git fetch --all
+  git branch
   git checkout "${version_type_source_branch['hotfix']}"
   git checkout -b "hotfix-$(increment_version new_version)"
   echo "Versão hotfix: $new_version"

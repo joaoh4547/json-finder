@@ -8,29 +8,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main branch
+      - name: Checkout develop branch
         uses: actions/checkout@v2
 
-      - name: Obter versão atual do package.json
-        id: get_version
-        run: |
-          VERSION=$(jq -r .version package.json)
-          echo "Current version: $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Instalar jq
+        run: sudo apt-get install jq  # Instala jq para manipulação de JSON
 
-      - name: Criar branch de hotfix
+      - name: Executar script.sh
         run: |
-          git checkout -b hotfix-${{ env.VERSION }}
-          git push origin hotfix-${{ env.VERSION }}
-
-      - name: Incrementar versão
-        run: |
-          IFS='.' read -r major minor patch <<< "${{ env.VERSION }}"
-          new_version="${major}.${minor}.$((patch + 1))"
-          echo "Nova versão: $new_version"
-          jq --arg new_version "$new_version" '.version = $new_version' package.json > tmp.json && mv tmp.json package.json
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add package.json
-          git commit -m "Atualiza versão para $new_version"
-          git push origin hotfix-${{ env.VERSION }}
+          chmod +x scripts/ci/open-version.sh
+          ./scripts/ci/open-version.sh -type='hotfix'
+        env:
+          PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_REPO: ${{github.repository}}

@@ -16,9 +16,9 @@ jobs:
 
       - name: Executar script.sh
         run: |
-          ls -la
-          chmod +x scripts/ci/open-version.sh
-          ./scripts/ci/open-version.sh -type='hotfix'
+          cd scripts/ci
+          chmod +x open-hotfix.sh
+          ./open-version.sh -type='hotfix'
         env:
           PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT_REPO: ${{github.repository}}

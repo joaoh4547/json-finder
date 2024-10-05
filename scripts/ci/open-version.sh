@@ -107,7 +107,7 @@ open_hotfix_version(){
   git push --set-upstream origin "$branch_name"
   git push origin "$branch_name"
 
-  create_milestone "$new_version"
+  create_milestone "$branch_name"
   echo "Hotfix version $new_version successfully created"
 }
 

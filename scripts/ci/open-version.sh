@@ -88,7 +88,7 @@ open_hotfix_version(){
   # Atualiza o commit message
   git commit -am "Create version $new_version"
   git push --set-upstream origin "$branch_name"
-  git push
+  git push origin "$branch_name"
 
   echo "Hotfix version $new_version successfully created"
 }

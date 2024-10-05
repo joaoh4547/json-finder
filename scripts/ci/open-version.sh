@@ -30,7 +30,7 @@ create_milestone() {
   local description="Create a version $version"
   due_date=$(date -u -d "+30 days" +"%Y-%m-%dT%H:%M:%SZ")
 
-  curl -L \
+  curl -s -L \
     -X POST \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer ${REPO_TOKEN}" \
@@ -44,7 +44,10 @@ create_milestone() {
 # Função para incrementar a versão
 increment_version() {
     local incrementtype="$1"
-    version=$(get_current_version)
+    version=$2
+
+    # Incrementa a versão no package.json
+    jq ".version=\"$version\"" package.json > package.json.new
 
     major=$(echo "$version" | cut -d '.' -f 1)
     minor=$(echo "$version" | cut -d '.' -f 2)
@@ -90,7 +93,7 @@ open_version_by_type(){
 }
 
 open_hotfix_version(){
-  new_version=$(increment_version "patch")
+  new_version=$(increment_version "patch", get_current_version)
   branch_name="hotfix-${new_version}"
   git fetch --all
   git checkout "${version_type_source_branch['hotfix']}"
@@ -104,7 +107,7 @@ open_hotfix_version(){
   git push --set-upstream origin "$branch_name"
   git push origin "$branch_name"
 
-  create_milestone "$branch_name"
+  create_milestone "$new_version"
   echo "Hotfix version $new_version successfully created"
 }
 
@@ -114,7 +117,7 @@ update_package_json() {
 }
 
 open_release_version(){
-    new_version=$(increment_version "minor")
+    new_version=$(increment_version "minor", get_current_version)
     branch_name="release-${new_version}"
     git fetch --all
     git branch
@@ -129,7 +132,7 @@ open_release_version(){
     git push --set-upstream origin "$branch_name"
     git push origin "$branch_name"
 
-    create_milestone "$branch_name"
+    create_milestone "release-$(increment_version "minor", new_version)"
 
     echo "Release version $new_version successfully created"
 }

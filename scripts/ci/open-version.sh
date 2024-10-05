@@ -28,6 +28,7 @@ get_current_version() {
 create_milestone() {
   local version=$1
   local description="Create a version $version"
+  due_date=$(date -u -d "+30 days" +"%Y-%m-%dT%H:%M:%SZ")
 
   curl -L \
     -X POST \
@@ -35,7 +36,7 @@ create_milestone() {
     -H "Authorization: Bearer ${REPO_TOKEN}" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     https://api.github.com/repos/"${PAT_REPO}"/milestones \
-    -d "{\"title\":\"$version\",\"state\":\"open\",\"description\":\"$description\",\"due_on\":\"$(date -d "+30 days" +%Y-%m-%d)\"}"
+    -d "{\"title\":\"$version\",\"state\":\"open\",\"description\":\"$description\",\"due_on\":\"$due_date\"}"
 }
 
 

@@ -21,11 +21,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout develop branch
+      - name: Checkout branch
         uses: actions/checkout@v2
 
       - name: Instalar jq
         run: sudo apt-get install jq  # Instala jq para manipulação de JSON
+
+      - name: Set up GitHub CLI
+        uses: actions/setup-gh@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Open version
         run: |

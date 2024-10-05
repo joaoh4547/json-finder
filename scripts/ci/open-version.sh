@@ -25,6 +25,13 @@ get_current_version() {
     echo "$VERSION"
 }
 
+create_milestone() {
+  local version=$1
+  local description="Create a version $version"
+  end_date=$(date -d "+30 days" +%Y-%m-%d)
+  gh issue milestone create --repo="${PAT_REPO}" --title="$version" --description="$description" --due-date="$end_date"
+}
+
 
 # Função para incrementar a versão
 increment_version() {
@@ -89,6 +96,7 @@ open_hotfix_version(){
   git push --set-upstream origin "$branch_name"
   git push origin "$branch_name"
 
+  create_milestone "$branch_name"
   echo "Hotfix version $new_version successfully created"
 }
 
@@ -112,6 +120,8 @@ open_release_version(){
     git commit -am "Create version $new_version"
     git push --set-upstream origin "$branch_name"
     git push origin "$branch_name"
+
+    create_milestone "$branch_name"
 
     echo "Release version $new_version successfully created"
 }

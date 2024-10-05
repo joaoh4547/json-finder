@@ -1,7 +1,5 @@
 #!/bin/bash
 
-gh extension install valeriobelli/gh-milestone
-
 
 git remote set-url origin https://x-access-token:"${PAT_TOKEN}"@github.com/"${PAT_REPO}".git
 git config --global user.email "action@github.com"
@@ -31,12 +29,21 @@ create_milestone() {
   local version=$1
   local description="Create a version $version"
   end_date=$(date -d "+30 days" +%Y-%m-%d)
-#  gh issue create --milestone "Demo" --repo="${PAT_REPO}" --title="$version" --description="$description" --due-date="$end_date"
-#  gh issue create --milestone "Demo" --title "hello from cli" \
-#     --repo "${PAT_REPO}"\
-#     --body "Body bidon from cli"
+##  gh issue create --milestone "Demo" --repo="${PAT_REPO}" --title="$version" --description="$description" --due-date="$end_date"
+##  gh issue create --milestone "Demo" --title "hello from cli" \
+##     --repo "${PAT_REPO}"\
+##     --body "Body bidon from cli"
+#
+#  gh milestone create --title "$version" --description "$description" --due-date "$end_date"
+  # GitHub CLI api
+  # https://cli.github.com/manual/gh_api
 
-  gh milestone create --title "$version" --description "$description" --due-date "$end_date"
+  gh api \
+    --method POST \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    /repos/"${PAT_REPO}"/milestones \
+     -f "title=$version" -f "state=open" -f "description=$description" -f "due_on=$end_date"
 
 }
 
@@ -160,7 +167,10 @@ if ! is_valid_type "$type"; then
   exit 1
 fi
 
+#gh extension upgrade --all
+#gh extension install valeriobelli/gh-milestone
 echo "Tipo de versão escolhida: $type"
 
+echo "${}"
 
 open_version_by_type

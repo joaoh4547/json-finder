@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+git remote set-url origin https://x-access-token:"${PAT_TOKEN}"@github.com/"${PAT_REPO}".git
+git config --global user.email "action@github.com"
+git config --global user.name "GitHub Action"
+
 set -e
 
 # Variável para armazenar o tipo
@@ -123,8 +128,6 @@ if ! is_valid_type "$type"; then
   exit 1
 fi
 
-git remote set-url origin https://x-access-token:"${PAT_TOKEN}"@github.com/"${PAT_REPO}".git
-git config --global user.email "action@github.com"
-git config --global user.name "GitHub Action"
+
 
 open_version_by_type

@@ -44,10 +44,10 @@ create_milestone() {
 # Função para incrementar a versão
 increment_version() {
     local incrementtype="$1"
+    version=$2
 
     # Incrementa a versão no package.json
     jq ".version=\"$version\"" package.json > package.json.new
-    version=$2
 
     major=$(echo "$version" | cut -d '.' -f 1)
     minor=$(echo "$version" | cut -d '.' -f 2)

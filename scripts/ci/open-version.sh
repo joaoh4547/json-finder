@@ -93,7 +93,7 @@ open_version_by_type(){
 }
 
 open_hotfix_version(){
-  new_version=$(increment_version "patch", get_current_version)
+  new_version=$(increment_version "patch" "$(get_current_version)")
   branch_name="hotfix-${new_version}"
   git fetch --all
   git checkout "${version_type_source_branch['hotfix']}"
@@ -117,7 +117,7 @@ update_package_json() {
 }
 
 open_release_version(){
-    new_version=$(increment_version "minor", get_current_version)
+    new_version=$(increment_version "minor" "$(get_current_version)")
     branch_name="release-${new_version}"
     git fetch --all
     git branch

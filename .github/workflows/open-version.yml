@@ -38,5 +38,4 @@ jobs:
           ./scripts/ci/open-version.sh -type='${{github.event.inputs.version_type}}'
         env:
           PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ github.token }}
           PAT_REPO: ${{github.repository}}

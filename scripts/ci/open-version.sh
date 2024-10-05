@@ -71,16 +71,18 @@ open_version_by_type(){
 
 open_hotfix_version(){
   new_version=$(increment_version "minor")
+  branch_name="hotfix-${new_version}"
   git fetch --all
   git branch
   git checkout "${version_type_source_branch['hotfix']}"
-  git checkout -b "hotfix-$(increment_version new_version)"
+  git checkout -b "$branch_name"
   echo "Versão hotfix: $new_version"
-  echo "Branch criado: hotfix-$(increment_version new_version)"
+  echo "Branch criado: $branch_name"
   update_package_json "${new_version}"
 
   # Atualiza o commit message
   git commit -am "Create version $new_version"
+  git push --set-upstream origin "$branch_name"
   git push
 
   echo "Hotfix version $new_version successfully created"

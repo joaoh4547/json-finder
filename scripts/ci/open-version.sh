@@ -132,7 +132,7 @@ open_release_version(){
     git push --set-upstream origin "$branch_name"
     git push origin "$branch_name"
 
-    create_milestone "release-$(increment_version "minor", new_version)"
+    create_milestone "release-$(increment_version "minor" "$new_version")"
 
     echo "Release version $new_version successfully created"
 }

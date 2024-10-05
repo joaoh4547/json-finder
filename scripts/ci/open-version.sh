@@ -1,5 +1,7 @@
 #!/bin/bash
 
+gh extension install valeriobelli/gh-milestone
+
 
 git remote set-url origin https://x-access-token:"${PAT_TOKEN}"@github.com/"${PAT_REPO}".git
 git config --global user.email "action@github.com"
@@ -29,7 +31,13 @@ create_milestone() {
   local version=$1
   local description="Create a version $version"
   end_date=$(date -d "+30 days" +%Y-%m-%d)
- gh issue create --milestone "Demo" --repo="${PAT_REPO}" --title="$version" --description="$description" --due-date="$end_date"
+#  gh issue create --milestone "Demo" --repo="${PAT_REPO}" --title="$version" --description="$description" --due-date="$end_date"
+#  gh issue create --milestone "Demo" --title "hello from cli" \
+#     --repo "${PAT_REPO}"\
+#     --body "Body bidon from cli"
+
+  gh milestone create --title "$version" --description "$description" --due-date "$end_date"
+
 }
 
 

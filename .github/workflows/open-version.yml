@@ -1,14 +1,23 @@
-name: Open Hotfix
+name: Open Version
 
 on:
-  workflow_dispatch:  # Permite execução manual
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Tipo de versão para ser aberta'
+        required: true
+        type: choice
+        default: 'release'
+        options:
+          - release
+          - hotfix
 
 permissions:
   contents: write     # Permissão de escrita
   pages: write        # Permissão para páginas
   id-token: write
 jobs:
-  open_hotfix:
+  open_version:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,10 +27,10 @@ jobs:
       - name: Instalar jq
         run: sudo apt-get install jq  # Instala jq para manipulação de JSON
 
-      - name: Executar script.sh
+      - name: Open version
         run: |
           chmod +x scripts/ci/open-version.sh
-          ./scripts/ci/open-version.sh -type='hotfix'
+          ./scripts/ci/open-version.sh -type='${{github.event.inputs.version_type}}'
         env:
           PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT_REPO: ${{github.repository}}

@@ -76,12 +76,11 @@ open_version_by_type(){
 
 open_hotfix_version(){
   new_version=$(increment_version "patch")
-  branch_name="release-${new_version}"
+  branch_name="hotfix-${new_version}"
   git fetch --all
-  git branch
-  git checkout "${version_type_source_branch['release']}"
+  git checkout "${version_type_source_branch['hotfix']}"
   git checkout -b "$branch_name"
-  echo "Versão release: $new_version"
+  echo "Versão hotfix: $new_version"
   echo "Branch criado: $branch_name"
   update_package_json "${new_version}"
 
@@ -90,7 +89,7 @@ open_hotfix_version(){
   git push --set-upstream origin "$branch_name"
   git push origin "$branch_name"
 
-  echo "Release version $new_version successfully created"
+  echo "Hotfix version $new_version successfully created"
 }
 
 update_package_json() {
@@ -100,12 +99,12 @@ update_package_json() {
 
 open_release_version(){
     new_version=$(increment_version "minor")
-    branch_name="hotfix-${new_version}"
+    branch_name="release-${new_version}"
     git fetch --all
     git branch
-    git checkout "${version_type_source_branch['hotfix']}"
+    git checkout "${version_type_source_branch['release']}"
     git checkout -b "$branch_name"
-    echo "Versão hotfix: $new_version"
+    echo "Versão release: $new_version"
     echo "Branch criado: $branch_name"
     update_package_json "${new_version}"
 

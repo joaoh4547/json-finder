@@ -28,24 +28,16 @@ get_current_version() {
 create_milestone() {
   local version=$1
   local description="Create a version $version"
-  end_date=$(date -d "+30 days" +%Y-%m-%d)
-##  gh issue create --milestone "Demo" --repo="${PAT_REPO}" --title="$version" --description="$description" --due-date="$end_date"
-##  gh issue create --milestone "Demo" --title "hello from cli" \
-##     --repo "${PAT_REPO}"\
-##     --body "Body bidon from cli"
-#
-#  gh milestone create --title "$version" --description "$description" --due-date "$end_date"
-  # GitHub CLI api
-  # https://cli.github.com/manual/gh_api
 
-  gh api \
-    --method POST \
+  curl -L \
+    -X POST \
     -H "Accept: application/vnd.github+json" \
+    -H "Authorization: Bearer ${PAT_TOKEN}" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
-    /repos/"${PAT_REPO}"/milestones \
-     -f "title=$version" -f "state=open" -f "description=$description" -f "due_on=$end_date"
-
+    https://api.github.com/repos/"${PAT_REPO}"/milestones \
+    -d "{\"title\":\"$version\",\"state\":\"open\",\"description\":\"$description\",\"due_on\":\"$(date -d "+30 days" +%Y-%m-%d)\"}"
 }
+
 
 
 # Função para incrementar a versão

@@ -171,6 +171,6 @@ fi
 #gh extension install valeriobelli/gh-milestone
 echo "Tipo de versão escolhida: $type"
 
-echo "${}"
+echo "${PAT_REPO}"
 
 open_version_by_type

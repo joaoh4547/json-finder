@@ -75,7 +75,7 @@ open_version_by_type(){
 }
 
 open_hotfix_version(){
-  new_version=$(increment_version "minor")
+  new_version=$(increment_version "patch")
   branch_name="hotfix-${new_version}"
   git fetch --all
   git branch

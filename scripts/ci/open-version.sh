@@ -29,7 +29,7 @@ create_milestone() {
   local version=$1
   local description="Create a version $version"
   end_date=$(date -d "+30 days" +%Y-%m-%d)
-  gh issue milestone create --repo="${PAT_REPO}" --title="$version" --description="$description" --due-date="$end_date"
+ gh issue create --milestone "Demo" --repo="${PAT_REPO}" --title="$version" --description="$description" --due-date="$end_date"
 }
 
 

@@ -28,7 +28,7 @@ jobs:
         run: sudo apt-get install jq  # Instala jq para manipulação de JSON
 
       - name: Set up GitHub CLI
-        uses: actions/setup-gh@v2
+        uses: cli/gh-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 

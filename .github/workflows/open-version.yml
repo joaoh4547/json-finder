@@ -39,3 +39,4 @@ jobs:
         env:
           PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT_REPO: ${{github.repository}}
+          REPO_TOKEN: ${{secrets.REPO_TOKEN}}

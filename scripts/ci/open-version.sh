@@ -32,7 +32,7 @@ create_milestone() {
   curl -L \
     -X POST \
     -H "Accept: application/vnd.github+json" \
-    -H "Authorization: Bearer ${PAT_TOKEN}" \
+    -H "Authorization: Bearer ${REPO_TOKEN}" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     https://api.github.com/repos/"${PAT_REPO}"/milestones \
     -d "{\"title\":\"$version\",\"state\":\"open\",\"description\":\"$description\",\"due_on\":\"$(date -d "+30 days" +%Y-%m-%d)\"}"

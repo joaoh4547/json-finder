@@ -43,6 +43,7 @@ jobs:
           base: develop
           head: ${{ github.ref }}
 
+
       - name: Criar tag e release no GitHub
         run: |
           VERSION=${{ github.ref_name }}

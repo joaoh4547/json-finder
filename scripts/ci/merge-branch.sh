@@ -6,7 +6,10 @@ git remote set-url origin https://x-access-token:"${PAT_TOKEN}"@github.com/"${PA
 git config --global user.email "action@github.com"
 git config --global user.name "GitHub Action"
 
-git fetch --all
+git pull --ff-only
+git remote update
+git remote prune origin
+
 
 source_branch_prefix=""
 dest_branch=""

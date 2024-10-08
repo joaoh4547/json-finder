@@ -27,7 +27,7 @@ jobs:
 
       - name: Prepare
         run: |
-          chmod +x scripts/ci/merge-branch.sh
+          chmod +x ./scripts/ci/merge-branch.sh
           
           # Stash as alterações locais
           if [[ $(git status --porcelain) ]]; then

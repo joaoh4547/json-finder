@@ -1,17 +1,16 @@
 import {Panel} from "@/components/ui/panel";
-import {Input} from "@/components/ui/input";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+// import {Input} from "@/components/ui/input";
+// import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 
 import {z} from "zod";
 import {useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Button} from "@/components/ui/button";
+// import {Button} from "@/components/ui/button";
 import {useEffect, useRef, useState} from "react";
-import {X} from "react-feather"
-import {Label} from "@/components/ui/label.tsx";
-import {Separator} from "@/components/ui/separator.tsx";
-import {Progress} from "@/components/ui/progress.tsx";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+// import {Label} from "@/components/ui/label.tsx";
+// import {Separator} from "@/components/ui/separator.tsx";
+// import {Progress} from "@/components/ui/progress.tsx";
+// import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 
 // Definindo um enum para os operadores permitidos
 const Operadores = {
@@ -263,137 +262,136 @@ export function JsonTransformPage() {
 
     return (
         <div className="mt-10">
-            <Form {...form} >
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Panel title="Detalhamento" className="flex-col gap-2">
-                        <FormField
-                            control={control}
-                            name="jsonFile"
-                            render={({field}) => (
-                                <FormItem className="w-full mb-5">
-                                    <FormLabel>Upload de Arquivo JSON</FormLabel>
-                                    <div className="flex items-center">
-                                        <Input
-                                            accept=".json"
-                                            type="file"
-                                            placeholder="Selecione um arquivo"
-                                            onChange={(e) => {
-                                                const files = e.target.files;
-                                                field.onChange(files && files.length > 0 ? files[0] : null);
-                                                handleFileChange(e);
-                                            }}
-                                            ref={fileInputRef}
-                                        />
-                                        {field.value && (
-                                            <Button
-                                                variant="secondary" size="icon"
-                                                type="button"
-                                                onClick={() => {
-                                                    field.onChange(null); // Limpa o valor no React Hook Form
-                                                    if (fileInputRef.current) {
-                                                        fileInputRef.current.value = ""; // Limpa o campo de entrada
-                                                    }
-                                                }}
-                                                className="ml-2"
-                                            >
-                                                <X/>
-                                            </Button>
-                                        )}
-                                    </div>
-                                    <FormDescription>
-                                        Selecione um arquivo JSON para processamento.
-                                    </FormDescription>
-                                    <FormMessage/>
+            {/*<Form {...form} >*/}
+            {/*    <form onSubmit={handleSubmit(onSubmit)}>*/}
+            {/*        <Panel title="Detalhamento" className="flex-col gap-2">*/}
+            {/*            <FormField*/}
+            {/*                control={control}*/}
+            {/*                name="jsonFile"*/}
+            {/*                render={({field}) => (*/}
+            {/*                    <FormItem className="w-full mb-5">*/}
+            {/*                        <FormLabel>Upload de Arquivo JSON</FormLabel>*/}
+            {/*                        <div className="flex items-center">*/}
+            {/*                            <Input*/}
+            {/*                                accept=".json"*/}
+            {/*                                type="file"*/}
+            {/*                                placeholder="Selecione um arquivo"*/}
+            {/*                                onChange={(e) => {*/}
+            {/*                                    const files = e.target.files;*/}
+            {/*                                    field.onChange(files && files.length > 0 ? files[0] : null);*/}
+            {/*                                    handleFileChange(e);*/}
+            {/*                                }}*/}
+            {/*                                ref={fileInputRef}*/}
+            {/*                            />*/}
+            {/*                            {field.value && (*/}
+            {/*                                <Button*/}
+            {/*                                    type="button"*/}
+            {/*                                    onClick={() => {*/}
+            {/*                                        field.onChange(null); // Limpa o valor no React Hook Form*/}
+            {/*                                        if (fileInputRef.current) {*/}
+            {/*                                            fileInputRef.current.value = ""; // Limpa o campo de entrada*/}
+            {/*                                        }*/}
+            {/*                                    }}*/}
+            {/*                                    className="ml-2"*/}
+            {/*                                >*/}
+            {/*                                    <X/>*/}
+            {/*                                </Button>*/}
+            {/*                            )}*/}
+            {/*                        </div>*/}
+            {/*                        <FormDescription>*/}
+            {/*                            Selecione um arquivo JSON para processamento.*/}
+            {/*                        </FormDescription>*/}
+            {/*                        <FormMessage/>*/}
 
-                                </FormItem>
-                            )}
-                        />
-                        {uploadProgress > 0 && (
-                            <Progress value={uploadProgress} max={100}/>
-                        )}
-                        <Label className="">Campos para Filtragem</Label>
-                        <Separator/>
-                        <>
-                            {fields.map((_, i) => (
-                                <div key={i} className=" mb-4 flex w-full gap-5 items-center"
-                                     ref={i === 0 ? firstErrorRef : null}>
-                                    <FormField
-                                        control={control}
-                                        name={`items.${i}.fieldPath`} // Campo nome
-                                        render={({field}) => (
-                                            <FormItem className="w-[30%]">
-                                                <FormLabel className="">Nome</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} className="input"/>
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={control}
-                                        name={`items.${i}.operator`} // Campo operador
-                                        render={({field}) => (
-                                            <FormItem className="w-[30%]">
-                                                <FormLabel>Operador</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue
-                                                                placeholder="Selecione o operador para busca"/>
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {
-                                                            Object.entries(Operadores).map(([key, value]) => (
-                                                                <SelectItem
-                                                                    key={key}
-                                                                    value={value}>{value}</SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={control}
-                                        name={`items.${i}.value`} // Campo nome
-                                        render={({field}) => (
-                                            <FormItem className="w-[30%]">
-                                                <FormLabel className="">Valor para Busca</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} className="input"/>
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
+            {/*                    </FormItem>*/}
+            {/*                )}*/}
+            {/*            />*/}
+            {/*            {uploadProgress > 0 && (*/}
+            {/*                <Progress value={uploadProgress} max={100}/>*/}
+            {/*            )}*/}
+            {/*            <Label className="">Campos para Filtragem</Label>*/}
+            {/*            <Separator/>*/}
+            {/*            <>*/}
+            {/*                {fields.map((_, i) => (*/}
+            {/*                    <div key={i} className=" mb-4 flex w-full gap-5 items-center"*/}
+            {/*                         ref={i === 0 ? firstErrorRef : null}>*/}
+            {/*                        <FormField*/}
+            {/*                            control={control}*/}
+            {/*                            name={`items.${i}.fieldPath`} // Campo nome*/}
+            {/*                            render={({field}) => (*/}
+            {/*                                <FormItem className="w-[30%]">*/}
+            {/*                                    <FormLabel className="">Nome</FormLabel>*/}
+            {/*                                    <FormControl>*/}
+            {/*                                        <Input {...field} className="input"/>*/}
+            {/*                                    </FormControl>*/}
+            {/*                                    <FormMessage/>*/}
+            {/*                                </FormItem>*/}
+            {/*                            )}*/}
+            {/*                        />*/}
+            {/*                        <FormField*/}
+            {/*                            control={control}*/}
+            {/*                            name={`items.${i}.operator`} // Campo operador*/}
+            {/*                            render={({field}) => (*/}
+            {/*                                <FormItem className="w-[30%]">*/}
+            {/*                                    <FormLabel>Operador</FormLabel>*/}
+            {/*                                    <Select onValueChange={field.onChange} defaultValue={field.value}>*/}
+            {/*                                        <FormControl>*/}
+            {/*                                            <SelectTrigger>*/}
+            {/*                                                <SelectValue*/}
+            {/*                                                    placeholder="Selecione o operador para busca"/>*/}
+            {/*                                            </SelectTrigger>*/}
+            {/*                                        </FormControl>*/}
+            {/*                                        <SelectContent>*/}
+            {/*                                            {*/}
+            {/*                                                Object.entries(Operadores).map(([key, value]) => (*/}
+            {/*                                                    <SelectItem*/}
+            {/*                                                        key={key}*/}
+            {/*                                                        value={value}>{value}</SelectItem>*/}
+            {/*                                                ))*/}
+            {/*                                            }*/}
+            {/*                                        </SelectContent>*/}
+            {/*                                    </Select>*/}
+            {/*                                    <FormMessage/>*/}
+            {/*                                </FormItem>*/}
+            {/*                            )}*/}
+            {/*                        />*/}
+            {/*                        <FormField*/}
+            {/*                            control={control}*/}
+            {/*                            name={`items.${i}.value`} // Campo nome*/}
+            {/*                            render={({field}) => (*/}
+            {/*                                <FormItem className="w-[30%]">*/}
+            {/*                                    <FormLabel className="">Valor para Busca</FormLabel>*/}
+            {/*                                    <FormControl>*/}
+            {/*                                        <Input {...field} className="input"/>*/}
+            {/*                                    </FormControl>*/}
+            {/*                                    <FormMessage/>*/}
+            {/*                                </FormItem>*/}
+            {/*                            )}*/}
+            {/*                        />*/}
 
-                                    <Button
-                                        type="button"
-                                        onClick={() => remove(i)} // Remove o item da lista
-                                        className={`"mt-2" ${getStyleItem(i)}`}
-                                        disabled={items.length <= 1}
-                                    >
-                                        Remover
-                                    </Button>
-                                </div>
+            {/*                        <Button*/}
+            {/*                            type="button"*/}
+            {/*                            onClick={() => remove(i)} // Remove o item da lista*/}
+            {/*                            className={`"mt-2" ${getStyleItem(i)}`}*/}
+            {/*                            disabled={items.length <= 1}*/}
+            {/*                        >*/}
+            {/*                            Remover*/}
+            {/*                        </Button>*/}
+            {/*                    </div>*/}
 
-                            ))}
-                        </>
-                        <Button
-                            type="button"
-                            onClick={() => append({fieldPath: "", operator: Operadores.IGUAL, value: ""})}
-                            className="mt-4"
-                        >
-                            Adicionar Item
-                        </Button>
-                    </Panel>
-                    <Button type="submit" className="my-4">Processar</Button>
-                </form>
-            </Form>
+            {/*                ))}*/}
+            {/*            </>*/}
+            {/*            <Button*/}
+            {/*                type="button"*/}
+            {/*                onClick={() => append({fieldPath: "", operator: Operadores.IGUAL, value: ""})}*/}
+            {/*                className="mt-4"*/}
+            {/*            >*/}
+            {/*                Adicionar Item*/}
+            {/*            </Button>*/}
+            {/*        </Panel>*/}
+            {/*        <Button type="submit" className="my-4">Processar</Button>*/}
+            {/*    </form>*/}
+            {/*</Form>*/}
         </div>
     );
 }

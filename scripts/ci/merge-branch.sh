@@ -132,3 +132,4 @@ if try_merge "$branch_name"; then
 else
   create_pull_request "$branch_name" "$dest_branch_name"
 fi
+

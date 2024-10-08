@@ -18,7 +18,7 @@ env:
   REPO_TOKEN: ${{secrets.REPO_TOKEN}}
 
 jobs:
-  open_version:
+  automatic_merge:
     runs-on: ubuntu-latest
 
     steps:

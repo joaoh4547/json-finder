@@ -1,0 +1,56 @@
+name: Auto merge job
+
+on:
+  push:
+    branches:
+      - main
+      - release-*
+      - hotfix-*
+
+permissions:
+  contents: write     # Permissão de escrita
+  pages: write        # Permissão para páginas
+  id-token: write
+
+env:
+  PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PAT_REPO: ${{github.repository}}
+  REPO_TOKEN: ${{secrets.REPO_TOKEN}}
+
+jobs:
+  automatic_merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
+      - name: Prepare
+        run: |         
+          # Stash as alterações locais
+          if [[ $(git status --porcelain) ]]; then
+            git stash push -m "Alterações locais antes do merge"
+          fi
+
+      - name: Merge main
+        if: startsWith(github.ref_name, 'main')
+        run: |
+          chmod +x scripts/ci/merge-branch.sh
+          ./scripts/ci/merge-branch.sh -source=main -dest=develop
+          ./scripts/ci/merge-branch.sh -source=develop -dest=release
+          ./scripts/ci/merge-branch.sh -source=main -dest=hotfix
+
+      - name: Merge release
+        if: startsWith(github.ref_name, 'release-')
+        run: |
+          chmod +x scripts/ci/merge-branch.sh
+          ./scripts/ci/merge-branch.sh -source=release -dest=develop
+
+      - name: Merge
+        if: startsWith(github.ref_name, 'hotfix-')
+        run: |
+          chmod +x scripts/ci/merge-branch.sh
+          ./scripts/ci/merge-branch.sh -source=hotfix -dest=release
+      - name: Apply Stash
+        run: |
+          git stash pop || true

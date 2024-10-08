@@ -1,4 +1,4 @@
-name: Open Version
+name: Auto merge job
 
 on:
   push:

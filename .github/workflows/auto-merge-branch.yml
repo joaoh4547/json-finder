@@ -25,6 +25,12 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
+      - name: Prepare
+        run: |         
+          # Stash as alterações locais
+          if [[ $(git status --porcelain) ]]; then
+            git stash push -m "Alterações locais antes do merge"
+          fi
 
       - name: Merge main
         if: startsWith(github.ref_name, 'main')
@@ -45,3 +51,6 @@ jobs:
         run: |
           chmod +x scripts/ci/merge-branch.sh
           ./scripts/ci/merge-branch.sh -source=hotfix -dest=release
+      - name: Apply Stash
+        run: |
+          git stash pop || true

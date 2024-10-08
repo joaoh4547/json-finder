@@ -1,0 +1,6 @@
+- pipeline: "open-version"
+  on: "CLICK"
+  refs:
+  - "refs/heads/develop"
+  fail_on_prepare_env_warning: true
+  resources: "NANO"

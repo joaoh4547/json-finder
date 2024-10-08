@@ -30,18 +30,18 @@ jobs:
         if: startsWith(github.ref_name, 'main')
         run: |
           chmod +x scripts/ci/merge-branch.sh
-          ./scripts/ci/merge-branch.sh -source=main dest=develop
-          ./scripts/ci/merge-branch.sh -source=develop dest=release
-          ./scripts/ci/merge-branch.sh -source=main dest=hotfix
+          ./scripts/ci/merge-branch.sh -source=main -dest=develop
+          ./scripts/ci/merge-branch.sh -source=develop -dest=release
+          ./scripts/ci/merge-branch.sh -source=main -dest=hotfix
 
       - name: Merge release
         if: startsWith(github.ref_name, 'release-')
         run: |
           chmod +x scripts/ci/merge-branch.sh
-          ./scripts/ci/merge-branch.sh -source=release dest=develop
+          ./scripts/ci/merge-branch.sh -source=release -dest=develop
 
       - name: Merge
         if: startsWith(github.ref_name, 'hotfix-')
         run: |
           chmod +x scripts/ci/merge-branch.sh
-          ./scripts/ci/merge-branch.sh -source=hotfix dest=release
+          ./scripts/ci/merge-branch.sh -source=hotfix -dest=release

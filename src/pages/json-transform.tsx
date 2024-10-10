@@ -1,16 +1,10 @@
 import {Panel} from "@/components/ui/panel";
-// import {Input} from "@/components/ui/input";
-// import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-
 import {z} from "zod";
-import {useFieldArray, useForm} from "react-hook-form";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-// import {Button} from "@/components/ui/button";
 import {useEffect, useRef, useState} from "react";
-// import {Label} from "@/components/ui/label.tsx";
-// import {Separator} from "@/components/ui/separator.tsx";
-// import {Progress} from "@/components/ui/progress.tsx";
-// import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+import {Button, Fieldset, FileInput, Flex, Input, Progress, Select} from "@mantine/core";
+
 
 // Definindo um enum para os operadores permitidos
 const Operadores = {
@@ -44,7 +38,7 @@ const formSchema = z.object({
             return value instanceof File;
             // Validação bem-sucedida
         }, {message: "Arquivo é obrigatório."})
-        .refine((file) => file != undefined && file.size <= 500 * 1024 * 1024, {
+        .refine((file) => file != undefined && file.size <= 1000 * 1024 * 1024, {
             message: "O arquivo deve ter no máximo 500MB.",
         }),
 
@@ -80,21 +74,19 @@ export function JsonTransformPage() {
 
     const {control, handleSubmit, watch, formState: {errors}} = form;
     const [uploadProgress, setUploadProgress] = useState<number>(0);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const fileInputRef = useRef<HTMLButtonElement>(null);
     const firstErrorRef = useRef<HTMLDivElement | null>(null);
     const {fields, append, remove} = useFieldArray({
         control,
         name: "items", // Nome do campo do array
     });
 
+
     const [fileData, setFileData] = useState(undefined)
 
     const items = watch("items");
 
-
     const onSubmit = (data: FormData) => {
-        console.log(data);
-        console.log(fileData)
         const filteredData = filterData(data)
 
 
@@ -110,8 +102,6 @@ export function JsonTransformPage() {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-
-
     };
 
     function createParams(param: FormData) {
@@ -213,10 +203,9 @@ export function JsonTransformPage() {
 
 
     // Função para lidar com a mudança no input de arquivo
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
+    const handleFileChange = (file: File | null) => {
         if (file) {
-            if (file.size > 500 * 1024 * 1024) {
+            if (file.size > 1000 * 1024 * 1024) {
                 return; // Não faz nada mais se o arquivo for muito grande
             }
             // Define o arquivo diretamente no formulário
@@ -233,7 +222,6 @@ export function JsonTransformPage() {
             };
 
             reader.onload = (event) => {
-                console.log(event.target?.result)
                 setFileData(JSON.parse(event.target?.result as string))
             }
 
@@ -262,56 +250,85 @@ export function JsonTransformPage() {
 
     return (
         <div className="mt-10">
-            {/*<Form {...form} >*/}
-            {/*    <form onSubmit={handleSubmit(onSubmit)}>*/}
-            {/*        <Panel title="Detalhamento" className="flex-col gap-2">*/}
-            {/*            <FormField*/}
-            {/*                control={control}*/}
-            {/*                name="jsonFile"*/}
-            {/*                render={({field}) => (*/}
-            {/*                    <FormItem className="w-full mb-5">*/}
-            {/*                        <FormLabel>Upload de Arquivo JSON</FormLabel>*/}
-            {/*                        <div className="flex items-center">*/}
-            {/*                            <Input*/}
-            {/*                                accept=".json"*/}
-            {/*                                type="file"*/}
-            {/*                                placeholder="Selecione um arquivo"*/}
-            {/*                                onChange={(e) => {*/}
-            {/*                                    const files = e.target.files;*/}
-            {/*                                    field.onChange(files && files.length > 0 ? files[0] : null);*/}
-            {/*                                    handleFileChange(e);*/}
-            {/*                                }}*/}
-            {/*                                ref={fileInputRef}*/}
-            {/*                            />*/}
-            {/*                            {field.value && (*/}
-            {/*                                <Button*/}
-            {/*                                    type="button"*/}
-            {/*                                    onClick={() => {*/}
-            {/*                                        field.onChange(null); // Limpa o valor no React Hook Form*/}
-            {/*                                        if (fileInputRef.current) {*/}
-            {/*                                            fileInputRef.current.value = ""; // Limpa o campo de entrada*/}
-            {/*                                        }*/}
-            {/*                                    }}*/}
-            {/*                                    className="ml-2"*/}
-            {/*                                >*/}
-            {/*                                    <X/>*/}
-            {/*                                </Button>*/}
-            {/*                            )}*/}
-            {/*                        </div>*/}
-            {/*                        <FormDescription>*/}
-            {/*                            Selecione um arquivo JSON para processamento.*/}
-            {/*                        </FormDescription>*/}
-            {/*                        <FormMessage/>*/}
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Panel title="Detalhamento" className="mb-5">
+                    <Flex direction="column" flex="1" gap={6} w="100%">
+                        <Flex w="100%" direction="column" gap="5">
+                            <Controller render={({field}) =>
+                                <FileInput required label="Arquivo JSON" clearable
+                                           placeholder="Selecione um arquivo"
+                                           accept=".json" error={errors.jsonFile?.message} ref={fileInputRef}
+                                           onChange={(e) => {
+                                               field.onChange(e)
+                                               handleFileChange(e)
+                                           }}
+                                />
+                            } name="jsonFile" control={control}/>
+                            {uploadProgress > 0 && (
+                                <Progress w="100%" value={uploadProgress} radius="xl" animated/>
+                            )}
+                        </Flex>
+                        <Fieldset legend="Campos para filtragem" className="mt-7 mb-2 gap-2">
+                            <Flex direction="column" className="gap-5">
+                                {fields.map((_, i) => (
+                                    <Flex flex={1} gap={20} w="100%" key={i} ref={i === 0 ? firstErrorRef : null}
+                                          align="end">
+                                        <Controller render={({field}) => (
+                                            <Input.Wrapper required w="100%" label="Nome do campo" className="w-[30%]"
+                                                           error={errors.items?.[i]?.fieldPath?.message}>
+                                                <Input    {...field} />
+                                            </Input.Wrapper>
+                                        )} control={control} name={`items.${i}.fieldPath`}/>
 
-            {/*                    </FormItem>*/}
-            {/*                )}*/}
-            {/*            />*/}
-            {/*            {uploadProgress > 0 && (*/}
-            {/*                <Progress value={uploadProgress} max={100}/>*/}
-            {/*            )}*/}
-            {/*            <Label className="">Campos para Filtragem</Label>*/}
-            {/*            <Separator/>*/}
-            {/*            <>*/}
+                                        <Controller render={({field}) => (
+                                            <Select label="Operador" error={errors.items?.[i]?.operator?.message || ""}
+                                                    required
+                                                    clearable
+                                                    className="w-full" data={Object.keys(Operadores).map(e => {
+                                                return {
+                                                    value: Operadores[e as keyof typeof Operadores],
+                                                    label: Operadores[e as keyof typeof Operadores],
+                                                }
+                                            })} searchable allowDeselect {...field} />
+                                        )} control={control} name={`items.${i}.operator`}/>
+
+
+                                        <Controller render={({field}) => (
+                                            <Input.Wrapper required w="100%" label="Valor para Busca"
+                                                           className="w-[30%]"
+                                                           error={errors.items?.[i]?.value?.message}>
+                                                <Input   {...field} />
+                                            </Input.Wrapper>
+                                        )} control={control} name={`items.${i}.value`}/>
+
+                                        <Button w="320px"
+                                                type="button"
+                                                onClick={() => remove(i)} // Remove o item da lista
+                                                className={`"mt-2" ${getStyleItem(i)}`}
+                                                disabled={items.length <= 1}
+                                        >
+                                            Remover
+                                        </Button>
+                                    </Flex>
+                                ))}
+                            </Flex>
+                        </Fieldset>
+                        <Button
+                            variant="outline"
+                            type="button"
+                            onClick={() => append({fieldPath: "", operator: Operadores.IGUAL, value: ""})}
+                            className="mt-4"
+                        >
+                            Adicionar Item
+                        </Button>
+                    </Flex>
+
+                </Panel>
+                {/*<Divider/>*/}
+                <Button className="mt-2" variant="filled" type="submit">Processar</Button>
+            </form>
+
+
             {/*                {fields.map((_, i) => (*/}
             {/*                    <div key={i} className=" mb-4 flex w-full gap-5 items-center"*/}
             {/*                         ref={i === 0 ? firstErrorRef : null}>*/}

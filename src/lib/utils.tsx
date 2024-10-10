@@ -2,7 +2,9 @@ import {type ClassValue, clsx} from "clsx"
 import {twMerge} from "tailwind-merge"
 // import {Code} from 'react-feather'
 import {ReactElement} from "react";
-import {CodeIcon} from "@radix-ui/react-icons";
+import {Code} from "react-feather";
+
+
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -15,14 +17,14 @@ type RouteInfo = {
     titleIcon?: ReactElement,
     isRoot?: boolean
 }
-
+//
 // Criando o objeto com chave 'string' e valor do tipo 'RouteInfo'
 export const rotes: { [key: string]: RouteInfo } = {
     '/': {
         title: 'Filtragem JSON',
         description: 'Realiza a filtrage de dados de arquivo JSON',
-        icon: <CodeIcon/>,
-        titleIcon: <CodeIcon/>
+        icon: <Code/>,
+        titleIcon: <Code/>
     }
 };
 

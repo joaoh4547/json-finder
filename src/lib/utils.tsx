@@ -1,7 +1,10 @@
 import {type ClassValue, clsx} from "clsx"
 import {twMerge} from "tailwind-merge"
-import {Code} from 'react-feather'
+// import {Code} from 'react-feather'
 import {ReactElement} from "react";
+import {Code} from "react-feather";
+
+
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -14,7 +17,7 @@ type RouteInfo = {
     titleIcon?: ReactElement,
     isRoot?: boolean
 }
-
+//
 // Criando o objeto com chave 'string' e valor do tipo 'RouteInfo'
 export const rotes: { [key: string]: RouteInfo } = {
     '/': {

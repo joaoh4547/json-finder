@@ -4,14 +4,8 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useRef, useState} from "react";
 import {Button, Fieldset, FileInput, Flex, Input, Progress, Select} from "@mantine/core";
-
-
-// Definindo um enum para os operadores permitidos
-const Operadores = {
-    IGUAL: "Igual",
-    MENOR: "Menor",
-    DIFERENTE: "Diferente",
-} as const;
+import {TranslationKeys} from "@/i18n/locales/tranlation.ts";
+import {useTranslator} from "@/hooks/use-translator.ts";
 
 
 enum Operator {
@@ -27,6 +21,12 @@ type ItemParamSerarch = {
 }
 
 
+const operatorKeys = Object.keys(Operator) as Array<Operator>;
+
+const OperatorSchema = z.enum(operatorKeys as [Operator, ...Operator[]], {
+    errorMap: () => ({message: "O Operador deve ser informado."})
+}); // Ajuste aqui
+
 // Definindo o esquema de validação
 const formSchema = z.object({
     jsonFile: z
@@ -38,33 +38,45 @@ const formSchema = z.object({
             return value instanceof File;
             // Validação bem-sucedida
         }, {message: "Arquivo é obrigatório."})
-        .refine((file) => file != undefined && file.size <= 1000 * 1024 * 1024, {
+        .refine((file) => file != undefined && file.size <= 1024 * 1024 * 1024, {
             message: "O arquivo deve ter no máximo 500MB.",
         }),
 
 
     items: z.array(z.object({
         fieldPath: z.string().min(1, 'O Campo deve ser informado'),
-        operator: z.enum([Operadores.IGUAL, Operadores.MENOR, Operadores.DIFERENTE], {
-            errorMap: () => ({message: "O Operador deve ser informado."}),
-        }),
+        operator: OperatorSchema,
         value: z.string().min(1, "O Valor deve ser informado."),
 
     })).min(1, {message: "Pelo menos um item deve ser informado."})
 });
 
 
+// type OperatorTranslator = {
+//     operator: Operator,
+//     labelKey: TranslationKeys | string
+// }
+
+// const operatorTranslator: OperatorTranslator = {
+//
+//     labelKey: 'filter-json.description', operator: Operator.IGUAL
+//
+// }
+
+
 // Tipo inferido a partir do esquema
 type FormData = z.infer<typeof formSchema>;
 
 export function JsonTransformPage() {
+    const {translate} = useTranslator()
+
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             items: [
                 {
                     fieldPath: "",
-                    operator: undefined,
+                    operator: Operator.IGUAL,
                     value: "",
                 }
             ],
@@ -134,7 +146,7 @@ export function JsonTransformPage() {
 
     const isAllMath = (params: ItemParamSerarch[]) => {
         for (const item of params) {
-            const op = getEnumKeyByValue(item.operator.toUpperCase())
+            const op = Operator[item.operator]
             if (!isMath(item.fieldPath, op, item.value, fileData)) {
                 return false;
             }
@@ -144,16 +156,12 @@ export function JsonTransformPage() {
 
     const isAllMathByValue = (targetValue: never, params: ItemParamSerarch[]) => {
         for (const item of params) {
-            const op = getEnumKeyByValue(item.operator.toUpperCase())
+            const op = Operator[item.operator]
             if (!isMath(item.fieldPath, op, item.value, targetValue)) {
                 return false;
             }
         }
         return true;
-    }
-
-    function getEnumKeyByValue(name: string): Operator {
-        return Operator[name as keyof typeof Operadores]
     }
 
 
@@ -205,7 +213,7 @@ export function JsonTransformPage() {
     // Função para lidar com a mudança no input de arquivo
     const handleFileChange = (file: File | null) => {
         if (file) {
-            if (file.size > 1000 * 1024 * 1024) {
+            if (file.size > 1024 * 1024 * 1024) {
                 return; // Não faz nada mais se o arquivo for muito grande
             }
             // Define o arquivo diretamente no formulário
@@ -251,11 +259,11 @@ export function JsonTransformPage() {
     return (
         <div className="mt-10">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Panel title="Detalhamento" className="mb-5">
+                <Panel title={translate('details.title')} className="mb-5">
                     <Flex direction="column" flex="1" gap={6} w="100%">
                         <Flex w="100%" direction="column" gap="5">
                             <Controller render={({field}) =>
-                                <FileInput required label="Arquivo JSON" clearable
+                                <FileInput required label={translate('json-file.label')} clearable
                                            placeholder="Selecione um arquivo"
                                            accept=".json" error={errors.jsonFile?.message} ref={fileInputRef}
                                            onChange={(e) => {
@@ -268,33 +276,33 @@ export function JsonTransformPage() {
                                 <Progress w="100%" value={uploadProgress} radius="xl" animated/>
                             )}
                         </Flex>
-                        <Fieldset legend="Campos para filtragem" className="mt-7 mb-2 gap-2">
+                        <Fieldset legend={translate('fields-to-filter.label')} className="mt-7 mb-2 gap-2">
                             <Flex direction="column" className="gap-5">
                                 {fields.map((_, i) => (
                                     <Flex flex={1} gap={20} w="100%" key={i} ref={i === 0 ? firstErrorRef : null}
                                           align="end">
                                         <Controller render={({field}) => (
-                                            <Input.Wrapper required w="100%" label="Nome do campo" className="w-[30%]"
+                                            <Input.Wrapper required w="100%" label={translate('field-name.label')}
+                                                           className="w-[30%]"
                                                            error={errors.items?.[i]?.fieldPath?.message}>
                                                 <Input    {...field} />
                                             </Input.Wrapper>
                                         )} control={control} name={`items.${i}.fieldPath`}/>
 
                                         <Controller render={({field}) => (
-                                            <Select label="Operador" error={errors.items?.[i]?.operator?.message || ""}
-                                                    required
-                                                    clearable
-                                                    className="w-full" data={Object.keys(Operadores).map(e => {
+                                            <Select label={translate('operator.label')}
+                                                    error={errors.items?.[i]?.operator?.message || ""}
+                                                    className="w-full" data={operatorKeys.map(e => {
                                                 return {
-                                                    value: Operadores[e as keyof typeof Operadores],
-                                                    label: Operadores[e as keyof typeof Operadores],
+                                                    value: e,
+                                                    label: e,
                                                 }
-                                            })} searchable allowDeselect {...field} />
+                                            })} searchable unselectable="off" {...field} />
                                         )} control={control} name={`items.${i}.operator`}/>
 
 
                                         <Controller render={({field}) => (
-                                            <Input.Wrapper required w="100%" label="Valor para Busca"
+                                            <Input.Wrapper required w="100%" label={translate('value.label')}
                                                            className="w-[30%]"
                                                            error={errors.items?.[i]?.value?.message}>
                                                 <Input   {...field} />
@@ -307,7 +315,7 @@ export function JsonTransformPage() {
                                                 className={`"mt-2" ${getStyleItem(i)}`}
                                                 disabled={items.length <= 1}
                                         >
-                                            Remover
+                                            {translate('remove.label')}
                                         </Button>
                                     </Flex>
                                 ))}
@@ -316,99 +324,17 @@ export function JsonTransformPage() {
                         <Button
                             variant="outline"
                             type="button"
-                            onClick={() => append({fieldPath: "", operator: Operadores.IGUAL, value: ""})}
+                            onClick={() => append({fieldPath: "", operator: Operator.IGUAL, value: ""})}
                             className="mt-4"
                         >
-                            Adicionar Item
+                            {translate('add-item.label')}
                         </Button>
                     </Flex>
 
                 </Panel>
                 {/*<Divider/>*/}
-                <Button className="mt-2" variant="filled" type="submit">Processar</Button>
+                <Button className="mt-2" variant="filled" type="submit">{translate('process.label')}</Button>
             </form>
-
-
-            {/*                {fields.map((_, i) => (*/}
-            {/*                    <div key={i} className=" mb-4 flex w-full gap-5 items-center"*/}
-            {/*                         ref={i === 0 ? firstErrorRef : null}>*/}
-            {/*                        <FormField*/}
-            {/*                            control={control}*/}
-            {/*                            name={`items.${i}.fieldPath`} // Campo nome*/}
-            {/*                            render={({field}) => (*/}
-            {/*                                <FormItem className="w-[30%]">*/}
-            {/*                                    <FormLabel className="">Nome</FormLabel>*/}
-            {/*                                    <FormControl>*/}
-            {/*                                        <Input {...field} className="input"/>*/}
-            {/*                                    </FormControl>*/}
-            {/*                                    <FormMessage/>*/}
-            {/*                                </FormItem>*/}
-            {/*                            )}*/}
-            {/*                        />*/}
-            {/*                        <FormField*/}
-            {/*                            control={control}*/}
-            {/*                            name={`items.${i}.operator`} // Campo operador*/}
-            {/*                            render={({field}) => (*/}
-            {/*                                <FormItem className="w-[30%]">*/}
-            {/*                                    <FormLabel>Operador</FormLabel>*/}
-            {/*                                    <Select onValueChange={field.onChange} defaultValue={field.value}>*/}
-            {/*                                        <FormControl>*/}
-            {/*                                            <SelectTrigger>*/}
-            {/*                                                <SelectValue*/}
-            {/*                                                    placeholder="Selecione o operador para busca"/>*/}
-            {/*                                            </SelectTrigger>*/}
-            {/*                                        </FormControl>*/}
-            {/*                                        <SelectContent>*/}
-            {/*                                            {*/}
-            {/*                                                Object.entries(Operadores).map(([key, value]) => (*/}
-            {/*                                                    <SelectItem*/}
-            {/*                                                        key={key}*/}
-            {/*                                                        value={value}>{value}</SelectItem>*/}
-            {/*                                                ))*/}
-            {/*                                            }*/}
-            {/*                                        </SelectContent>*/}
-            {/*                                    </Select>*/}
-            {/*                                    <FormMessage/>*/}
-            {/*                                </FormItem>*/}
-            {/*                            )}*/}
-            {/*                        />*/}
-            {/*                        <FormField*/}
-            {/*                            control={control}*/}
-            {/*                            name={`items.${i}.value`} // Campo nome*/}
-            {/*                            render={({field}) => (*/}
-            {/*                                <FormItem className="w-[30%]">*/}
-            {/*                                    <FormLabel className="">Valor para Busca</FormLabel>*/}
-            {/*                                    <FormControl>*/}
-            {/*                                        <Input {...field} className="input"/>*/}
-            {/*                                    </FormControl>*/}
-            {/*                                    <FormMessage/>*/}
-            {/*                                </FormItem>*/}
-            {/*                            )}*/}
-            {/*                        />*/}
-
-            {/*                        <Button*/}
-            {/*                            type="button"*/}
-            {/*                            onClick={() => remove(i)} // Remove o item da lista*/}
-            {/*                            className={`"mt-2" ${getStyleItem(i)}`}*/}
-            {/*                            disabled={items.length <= 1}*/}
-            {/*                        >*/}
-            {/*                            Remover*/}
-            {/*                        </Button>*/}
-            {/*                    </div>*/}
-
-            {/*                ))}*/}
-            {/*            </>*/}
-            {/*            <Button*/}
-            {/*                type="button"*/}
-            {/*                onClick={() => append({fieldPath: "", operator: Operadores.IGUAL, value: ""})}*/}
-            {/*                className="mt-4"*/}
-            {/*            >*/}
-            {/*                Adicionar Item*/}
-            {/*            </Button>*/}
-            {/*        </Panel>*/}
-            {/*        <Button type="submit" className="my-4">Processar</Button>*/}
-            {/*    </form>*/}
-            {/*</Form>*/}
         </div>
     );
 }

@@ -1,9 +1,13 @@
 import {Link, useLocation} from "react-router-dom";
 import {rotes} from "@/lib/utils.tsx";
+import {useTranslator} from "@/hooks/use-translator.ts";
 
 export function SideBar() {
 
     const location = useLocation()
+
+    const {translate} = useTranslator()
+
 
     const makeLinks = () => {
 
@@ -16,7 +20,7 @@ export function SideBar() {
                      text-white
                      active:bg-purple-500`}>
                 <Link to={route} className="flex w-full justify-between">
-                    {rotes[route].title} {rotes[route].icon}
+                    {translate(rotes[route].title)} {rotes[route].icon}
                 </Link>
             </li>
         ))

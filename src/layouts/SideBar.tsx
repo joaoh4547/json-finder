@@ -1,5 +1,5 @@
 import {Link, useLocation} from "react-router-dom";
-import {rotes} from "@/lib/utils.tsx";
+import {routes} from "@/lib/routes.tsx";
 import {useTranslator} from "@/hooks/use-translator.ts";
 
 export function SideBar() {
@@ -11,7 +11,7 @@ export function SideBar() {
 
     const makeLinks = () => {
 
-        const keys: string[] = Object.keys(rotes)
+        const keys: string[] = Object.keys(routes)
         return keys.map((route) => (
             <li key={route}
                 className={`${String(location.pathname).toLowerCase() == route ? 'bg-purple-600' : 'bg-purple-500'} 
@@ -20,7 +20,7 @@ export function SideBar() {
                      text-white
                      active:bg-purple-500`}>
                 <Link to={route} className="flex w-full justify-between">
-                    {translate(rotes[route].title)} {rotes[route].icon}
+                    {translate(routes[route].title)} {routes[route].icon}
                 </Link>
             </li>
         ))

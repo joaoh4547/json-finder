@@ -27,8 +27,8 @@ export function RootLayout() {
         </Flex>
         <Flex className="p-5 flex-col w-full">
             <Flex direction="column">
-                <h1 className="font-medium text-2xl">{translate(rotes[location.pathname].title)}</h1>
-                <h2 className="font-light">{translate(rotes[location.pathname].description)}</h2>
+                <h1 className="font-medium text-2xl">{translate(routes[location.pathname].title)}</h1>
+                <h2 className="font-light">{translate(routes[location.pathname].description)}</h2>
             </Flex>
             <Flex w="100%" direction="column">
                 <Outlet/>

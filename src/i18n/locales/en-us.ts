@@ -23,7 +23,8 @@ const translation: Translation = {
         different_label: "Different",
         greater_than_label: "Greater",
         less_than_label: "Less",
-        json_file_required: "The json file is required"
+        json_file_required: "The json file is required",
+        select_lang: "Select language",
     }
 }
 

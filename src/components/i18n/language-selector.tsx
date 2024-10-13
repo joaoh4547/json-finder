@@ -4,14 +4,21 @@ import locales from "@/i18n/locales";
 import {Flag} from "@/components/i18n/flag.tsx";
 import {useEffect, useRef, useState} from "react";
 import {Globe} from "react-feather";
+import {useTranslator} from "@/hooks/use-translator.ts";
 
 
 type LanguageSelectorProps = {
     className?: string
 }
 
+const languageColor = {
+    "en-US": "blue",
+    "pt-BR": "green"
+}
+
 export function LanguageSelector(props: LanguageSelectorProps) {
     const {i18n} = useTranslation()
+    const {translate} = useTranslator()
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -23,7 +30,6 @@ export function LanguageSelector(props: LanguageSelectorProps) {
     }
 
     const handleClickOutside = (event: MouseEvent) => {
-        // Verifica se o clique foi fora do componente
         if (ref.current && !ref.current.contains(event.target as Node)) {
             setHidden(true);
         }
@@ -40,18 +46,16 @@ export function LanguageSelector(props: LanguageSelectorProps) {
     const selectedLanguage = i18n.language
 
     return <Flex ref={ref} {...props}>
-        {hiddenLanguage ?
-            <Tooltip label={"Selecionar Idioma"}>
-                <ActionIcon onClick={() => setHidden(prev => !prev)}>
+        {hiddenLanguage ? <Tooltip label={translate('select_lang')}>
+                <ActionIcon onClick={() => setHidden(prev => !prev)} size="lg"
+                            color={languageColor[selectedLanguage as 'pt-BR' | 'en-US']}>
                     <Globe/>
                 </ActionIcon>
             </Tooltip>
-            :
-
-
-            Object.keys(locales).map((v, i) => {
+            : Object.keys(locales).map((v, i) => {
                 return <Flag image={`${String(v).toLowerCase()}.png`} isSelected={selectedLanguage == v}
                              onClick={() => handleChangeLanguage(v)} key={i}/>
-            })}
+            })
+        }
     </Flex>
 }

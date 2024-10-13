@@ -19,6 +19,7 @@ const equal_label = "equal_label";
 const different_label = "different_label";
 const greater_than_label = "greater_than_label";
 const less_than_label = "less_than_label";
+const select_lang = "select_lang";
 
 
 export const messages = {
@@ -43,6 +44,7 @@ export const messages = {
     different_label,
     greater_than_label,
     less_than_label,
+    select_lang,
 
 } as const
 

@@ -23,7 +23,8 @@ const translation: Translation = {
         equal_label: "Igual",
         different_label: "Diferente",
         greater_than_label: "Maior",
-        less_than_label: "Menor"
+        less_than_label: "Menor",
+        select_lang: "Selecione o idioma"
     }
 }
 

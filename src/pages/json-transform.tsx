@@ -21,18 +21,15 @@ const operatorKeys = Object.keys(Operator) as Array<Operator>;
 
 const OperatorSchema = z.enum(operatorKeys as [Operator, ...Operator[]], {
     errorMap: () => ({message: messages.operator_required_message})
-}); // Ajuste aqui
+});
 
-// Definindo o esquema de validação
 const formSchema = z.object({
     jsonFile: z
         .custom<File | null>((value) => {
-            // Verifica se o arquivo é fornecido e se é uma instância de File
             if (!value) {
-                return false; // Se não houver arquivo, falha a validação
+                return false;
             }
             return value instanceof File;
-            // Validação bem-sucedida
         }, {message: messages.json_file_required})
         .refine((file) => file != undefined && file.size <= maxFileSize, {
             message: messages.json_file_size_max_message,
@@ -40,11 +37,10 @@ const formSchema = z.object({
 
 
     items: z.array(z.object({
-        fieldPath: z.string().min(1, 'O Campo deve ser informado'),
+        fieldPath: z.string().min(1, messages.field_required_message),
         operator: OperatorSchema,
-        value: z.string().min(1, "O Valor deve ser informado."),
-
-    })).min(1, {message: "Pelo menos um item deve ser informado."})
+        value: z.string().min(1, messages.value_required_message),
+    }))
 });
 
 
@@ -60,7 +56,6 @@ const operatorTranslator: OperatorTranslator[] = [
 ]
 
 
-// Tipo inferido a partir do esquema
 type FormData = z.infer<typeof formSchema>;
 
 export function JsonTransformPage() {
@@ -97,8 +92,6 @@ export function JsonTransformPage() {
     const onSubmit = (data: FormData) => {
         const result = SearchEngineFactory.createSearchEngine('JSON').search(createParams(data), fileData)
 
-        // const engine = SearchEngineFactory.createSearchEngine('JSON')
-        // Salva o resultado no localStorage
         const fileResult: string
             = JSON.stringify(result, null, 4)
 
@@ -116,32 +109,30 @@ export function JsonTransformPage() {
     function createParams(param: FormData) {
         return param.items.map(item => {
             return {
-                fieldPath: item.fieldPath,
+                field: item.fieldPath,
                 operator: item.operator,
                 value: item.value,
-            }
-        }) as unknown as SearchParams[];
+            } as SearchParams
+        })
     }
 
 
-    // Função para lidar com a mudança no input de arquivo
     const handleFileChange = (file: File | null) => {
         if (file) {
             console.log(file.size)
             console.log(maxFileSize)
             if (file.size > maxFileSize) {
-                return; // Não faz nada mais se o arquivo for muito grande
+                return;
             }
-            // Define o arquivo diretamente no formulário
+
             form.setValue("jsonFile", file);
 
             const reader = new FileReader();
 
-            // Evento para capturar o progresso do upload
             reader.onprogress = (event) => {
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
-                    setUploadProgress(percentComplete); // Atualiza o estado com o progresso
+                    setUploadProgress(percentComplete);
                 }
             };
 
@@ -149,23 +140,21 @@ export function JsonTransformPage() {
                 setFileData(JSON.parse(event.target?.result as string))
             }
 
-            // Evento disparado quando a leitura termina
+
             reader.onloadend = () => {
-                setTimeout(() => setUploadProgress(0), 1000); // Limpa a barra de progresso após a conclusão
+                setTimeout(() => setUploadProgress(0), 1000);
             };
 
-            // Lê o arquivo
             reader.readAsText(file);
         }
     };
 
     const getStyleItem = (index: number) => {
-        return !(errors?.items?.[index]) ? 'self-end' : '';
+        return !(errors?.items?.[index]) ? 'self-end' : 'self-center h-[80px]';
     };
 
 
     useEffect(() => {
-        // Identifica se há erros após a submissão
         const errors = Object.keys(control.getFieldState("items")).length > 0;
         if (errors && firstErrorRef.current) {
             firstErrorRef.current.scrollIntoView({behavior: "smooth", block: "center"});
@@ -201,8 +190,8 @@ export function JsonTransformPage() {
                                           align="end">
                                         <Controller render={({field}) => (
                                             <Input.Wrapper required w="100%" label={translate('field_name_label')}
-                                                           className="w-[30%]"
-                                                           error={errors.items?.[i]?.fieldPath?.message}>
+                                                           className={`w-[30%] ${getStyleItem(i)}`}
+                                                           error={errors.items?.[i]?.fieldPath?.message && translate(errors.items?.[i]?.fieldPath?.message)}>
                                                 <Input    {...field} />
                                             </Input.Wrapper>
                                         )} control={control} name={`items.${i}.fieldPath`}/>
@@ -210,19 +199,20 @@ export function JsonTransformPage() {
                                         <Controller render={({field}) => (
                                             <Select label={translate('operator_label')}
                                                     error={errors.items?.[i]?.operator?.message && translate(errors.items?.[i]?.operator?.message)}
-                                                    className="w-full" data={operatorKeys.map(e => {
-                                                return {
-                                                    value: e,
-                                                    label: translate(operatorTranslator.find(x => x.operator == e)!.labelKey),
-                                                }
-                                            })} searchable unselectable="off" {...field} />
+                                                    className={`w-full ${getStyleItem(i)}`}
+                                                    data={operatorKeys.map(e => {
+                                                        return {
+                                                            value: e,
+                                                            label: translate(operatorTranslator.find(x => x.operator == e)!.labelKey),
+                                                        }
+                                                    })} searchable unselectable="off" {...field} />
                                         )} control={control} name={`items.${i}.operator`}/>
 
 
                                         <Controller render={({field}) => (
                                             <Input.Wrapper required w="100%" label={translate('value_label')}
-                                                           className="w-[30%]"
-                                                           error={errors.items?.[i]?.value?.message}>
+                                                           className={`w-[30%] ${getStyleItem(i)}`}
+                                                           error={errors.items?.[i]?.value?.message && translate(errors.items?.[i]?.value?.message)}>
                                                 <Input   {...field} />
                                             </Input.Wrapper>
                                         )} control={control} name={`items.${i}.value`}/>

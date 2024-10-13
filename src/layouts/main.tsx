@@ -6,6 +6,7 @@ import {Flex} from "@mantine/core";
 import {useTranslator} from "@/hooks/use-translator.ts";
 import {LanguageSelector} from "@/components/i18n/language-selector.tsx";
 import {useEffect} from "react";
+
 export function RootLayout() {
 
     const location = useLocation()

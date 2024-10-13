@@ -21,8 +21,8 @@ type RouteInfo = {
 // Criando o objeto com chave 'string' e valor do tipo 'RouteInfo'
 export const rotes: { [key: string]: RouteInfo } = {
     '/': {
-        title: 'filter-json.title',
-        description: 'filter-json.description',
+        title: 'filter_json_title',
+        description: 'filter_json_description',
         icon: <Code/>,
         titleIcon: <Code/>
     }

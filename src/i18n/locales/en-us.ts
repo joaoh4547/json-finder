@@ -1,22 +1,34 @@
 import {Translation} from "@/i18n/locales/tranlation.ts";
 
+
 const translation: Translation = {
     translations: {
-        "filter-json.title": "Filter JSON",
-        "filter-json.description": "Perform filter on JSON file",
-        "details.title": "Details",
-        "process.label": "Process",
-        "add-item.label": "Add Item",
-        "json-file.label": "Json File",
-        "field-name.label": "Field Name",
-        "operator.label": "Operator",
-        "value.label": "Value to search",
-        "remove.label": "Remove",
-        "fields-to-filter.label": "Fields to filter",
-        "select-file.label": "Select File",
-
+        filter_json_title: "Filter JSON",
+        filter_json_description: "Perform filter on JSON file",
+        details_title: "Details",
+        process_label: "Process",
+        add_item_label: "Add Item",
+        json_file_label: "Json File",
+        field_name_label: "Field Name",
+        operator_label: "Operator",
+        value_label: "Value to search",
+        remove_label: "Remove",
+        fields_to_filter_label: "Fields to filter",
+        select_file_label: "Select File",
+        field_required_message: "Field Name required",
+        operator_required_message: "Operator required",
+        value_required_message: "Value required",
+        json_file_size_max_message: "The file must have a maximum size of {{value}}",
+        equal_label: "Equal",
+        different_label: "Different",
+        greater_than_label: "Greater",
+        less_than_label: "Less",
+        json_file_required: "The json file is required"
     }
 }
+
+
+
 
 
 export default translation

@@ -3,7 +3,7 @@ import {twMerge} from "tailwind-merge"
 // import {Code} from 'react-feather'
 import {ReactElement} from "react";
 import {Code} from "react-feather";
-
+import {TranslationKeys} from "@/i18n/locales/tranlation.ts";
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -11,8 +11,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 type RouteInfo = {
-    title: string;
-    description: string;
+    title: TranslationKeys | string;
+    description: TranslationKeys | string;
     icon?: ReactElement,
     titleIcon?: ReactElement,
     isRoot?: boolean
@@ -21,8 +21,8 @@ type RouteInfo = {
 // Criando o objeto com chave 'string' e valor do tipo 'RouteInfo'
 export const rotes: { [key: string]: RouteInfo } = {
     '/': {
-        title: 'Filtragem JSON',
-        description: 'Realiza a filtrage de dados de arquivo JSON',
+        title: 'filter_json_title',
+        description: 'filter_json_description',
         icon: <Code/>,
         titleIcon: <Code/>
     }

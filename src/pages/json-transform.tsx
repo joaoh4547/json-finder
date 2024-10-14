@@ -3,13 +3,14 @@ import {z} from "zod";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useRef, useState} from "react";
-import {Button, Fieldset, FileInput, Flex, Input, Divider, Progress, Select} from "@mantine/core";
+import {Button, Divider, Fieldset, FileInput, Flex, Input, Progress, Select} from "@mantine/core";
 import {messages, TranslationKeys} from "@/i18n/locales/tranlation.ts";
 import {useTranslator} from "@/hooks/use-translator.ts";
 import {convertFileSize, generateFileSize, Unit} from "@/lib/unit.ts";
 import {Operator} from "@/types/filter-data.ts";
 import {SearchEngineFactory} from "@/lib/search-engine";
 import {SearchParams} from "@/types/search-engine.ts";
+import {getKeys, getPropertyNames} from "@/lib/objects.ts";
 
 
 const fileUnit: Unit = 'MB'
@@ -89,6 +90,8 @@ export function JsonTransformPage() {
 
     const items = watch("items");
 
+    const fileUploaded = watch('jsonFile')
+
     const onSubmit = (data: FormData) => {
         const result = SearchEngineFactory.createSearchEngine('JSON').search(createParams(data), fileData)
 
@@ -121,6 +124,7 @@ export function JsonTransformPage() {
         if (file) {
             console.log(file.size)
             console.log(maxFileSize)
+
             if (file.size > maxFileSize) {
                 return;
             }
@@ -138,8 +142,10 @@ export function JsonTransformPage() {
 
             reader.onload = (event) => {
                 setFileData(JSON.parse(event.target?.result as string))
+                if (fileData) {
+                    console.log(getKeys(fileData as never));
+                }
             }
-
 
             reader.onloadend = () => {
                 setTimeout(() => setUploadProgress(0), 1000);
@@ -173,9 +179,17 @@ export function JsonTransformPage() {
                                            accept=".json"
                                            error={errors.jsonFile?.message && translate(errors.jsonFile?.message, errors.jsonFile?.message == messages.json_file_size_max_message ? {value: convertFileSize(maxFileSize, 'BYTES', fileUnit) + fileUnit} : {})}
                                            ref={fileInputRef}
-                                           onChange={(e) => {
+                                           onChange={async (e) => {
                                                field.onChange(e)
                                                handleFileChange(e)
+                                               if (!e) {
+                                                   for (const i of items) {
+                                                       form.resetField(`items.${items.indexOf(i)}.fieldPath`)
+                                                       if (form.formState.isSubmitted) {
+                                                           await form.trigger(`items.${items.indexOf(i)}.fieldPath`)
+                                                       }
+                                                   }
+                                               }
                                            }}
                                 />
                             } name="jsonFile" control={control}/>
@@ -189,23 +203,40 @@ export function JsonTransformPage() {
                                     <Flex flex={1} gap={20} w="100%" key={i} ref={i === 0 ? firstErrorRef : null}
                                           align="end">
                                         <Controller render={({field}) => (
-                                            <Input.Wrapper required w="100%" label={translate('field_name_label')}
-                                                           className={`w-[30%] ${getStyleItem(i)}`}
-                                                           error={errors.items?.[i]?.fieldPath?.message && translate(errors.items?.[i]?.fieldPath?.message)}>
-                                                <Input    {...field} />
-                                            </Input.Wrapper>
+                                            !(fileUploaded && fileData) ? (
+                                                    <Input.Wrapper required w="100%" label={translate('field_name_label')}
+                                                                   className={`w-[30%] ${getStyleItem(i)}`}
+                                                                   error={errors.items?.[i]?.fieldPath?.message && translate(errors.items?.[i]?.fieldPath?.message)}>
+                                                        <Input    {...field} />
+                                                    </Input.Wrapper>
+                                                ) :
+                                                <Select label={translate('field_name_label')}
+                                                        className={`w-full ${getStyleItem(i)}`}
+                                                        error={errors.items?.[i]?.fieldPath?.message && translate(errors.items?.[i]?.fieldPath?.message)}
+                                                        data={getPropertyNames(fileData).map(data => {
+                                                            return {
+                                                                value: data.propertyName,
+                                                                label: data.property,
+                                                            }
+                                                        })}
+                                                        {...field}
+                                                />
+
                                         )} control={control} name={`items.${i}.fieldPath`}/>
 
                                         <Controller render={({field}) => (
-                                            <Select label={translate('operator_label')}
-                                                    error={errors.items?.[i]?.operator?.message && translate(errors.items?.[i]?.operator?.message)}
-                                                    className={`w-full ${getStyleItem(i)}`}
-                                                    data={operatorKeys.map(e => {
-                                                        return {
-                                                            value: e,
-                                                            label: translate(operatorTranslator.find(x => x.operator == e)!.labelKey),
-                                                        }
-                                                    })} searchable unselectable="off" {...field} />
+                                            <>
+
+                                                <Select label={translate('operator_label')}
+                                                        error={errors.items?.[i]?.operator?.message && translate(errors.items?.[i]?.operator?.message)}
+                                                        className={`w-full ${getStyleItem(i)}`}
+                                                        data={operatorKeys.map(e => {
+                                                            return {
+                                                                value: e,
+                                                                label: translate(operatorTranslator.find(x => x.operator == e)!.labelKey),
+                                                            }
+                                                        })} searchable unselectable="off" {...field} />
+                                            </>
                                         )} control={control} name={`items.${i}.operator`}/>
 
 

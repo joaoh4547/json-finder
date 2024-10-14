@@ -1,11 +1,10 @@
 import {Outlet, useLocation} from "react-router-dom";
-// import {SideBar} from "@/layouts/SideBar.tsx";
-import {useTitle} from "@/hooks/use-title.ts";
-import {rotes} from "@/lib/utils.tsx";
-import {Flex} from "@mantine/core";
 import {SideBar} from "@/layouts/SideBar.tsx";
-import {LanguageSelector} from "@/components/i18n/language-selector.tsx";
+import {useTitle} from "@/hooks/use-title.ts";
+import {routes} from "@/lib/routes.tsx";
+import {Flex} from "@mantine/core";
 import {useTranslator} from "@/hooks/use-translator.ts";
+import {LanguageSelector} from "@/components/i18n/language-selector.tsx";
 import {useEffect} from "react";
 
 export function RootLayout() {
@@ -17,7 +16,7 @@ export function RootLayout() {
     const {translate} = useTranslator()
 
     useEffect(() => {
-        setTitle(translate(rotes[location.pathname].title))
+        setTitle(translate(routes[location.pathname].title))
     }, [translate, location.pathname, setTitle])
 
     return <Flex h="100vh" w="100vw" className="overflow-x-hidden">
@@ -29,8 +28,8 @@ export function RootLayout() {
         </Flex>
         <Flex className="p-5 flex-col w-full">
             <Flex direction="column">
-                <h1 className="font-medium text-2xl">{translate(rotes[location.pathname].title)}</h1>
-                <h2 className="font-light">{translate(rotes[location.pathname].description)}</h2>
+                <h1 className="font-medium text-2xl">{translate(routes[location.pathname].title)}</h1>
+                <h2 className="font-light">{translate(routes[location.pathname].description)}</h2>
             </Flex>
             <Flex w="100%" direction="column">
                 <Outlet/>

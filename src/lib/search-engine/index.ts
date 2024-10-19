@@ -4,7 +4,6 @@ import {SearchEngine} from "@/types/search-engine.ts";
 type SearchMode = "JSON" | "CSV" | "XML" | "XLS"
 
 
-
 export class SearchEngineFactory {
     static createSearchEngine<T>(mode: SearchMode): SearchEngine<T> {
         switch (mode) {

@@ -25,6 +25,12 @@ const translation: Translation = {
         less_than_label: "Less",
         json_file_required: "The json file is required",
         select_lang: "Select language",
+        greater_than_or_equal_label: "Greater than or equal",
+        less_than_or_equal_label: "Less than or equal",
+        contains_label: "Contains",
+        starts_with_label: "Starts with",
+        ends_with_label: "Ends with",
+        negate_label: "Negate"
     }
 }
 

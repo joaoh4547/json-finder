@@ -18,8 +18,14 @@ const json_file_size_max_message = "json_file_size_max_message";
 const equal_label = "equal_label";
 const different_label = "different_label";
 const greater_than_label = "greater_than_label";
+const greater_than_or_equal_label = "greater_than_or_equal_label";
 const less_than_label = "less_than_label";
+const less_than_or_equal_label = "less_than_or_equal_label";
 const select_lang = "select_lang";
+const contains_label = "contains_label";
+const starts_with_label = "starts_with_label";
+const ends_with_label = "ends_with_label";
+const negate_label = "negate_label";
 
 
 export const messages = {
@@ -45,6 +51,12 @@ export const messages = {
     greater_than_label,
     less_than_label,
     select_lang,
+    greater_than_or_equal_label,
+    less_than_or_equal_label,
+    contains_label,
+    starts_with_label,
+    ends_with_label,
+    negate_label
 
 } as const
 

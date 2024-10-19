@@ -10,14 +10,14 @@ export type SearchParams = {
 
 
 export interface SearchEngine<T> {
-    search(params: SearchParams[], target: T | T[]): T | T[];
+    search(params: SearchParams[], target: T | T[]): Promise<T> | Promise<T[]>;
 
 }
 
 
 export abstract class AbstractSearchEngine<T> implements SearchEngine<T> {
 
-    abstract search(params: SearchParams[], target: T | T[]): T | T[];
+    abstract search(params: SearchParams[], target: T | T[]):  Promise<T> | Promise<T[]>;
 
 
     protected isMatch(searchParams: SearchParams, target: T | T[]): boolean {
@@ -51,12 +51,12 @@ export abstract class AbstractSearchEngine<T> implements SearchEngine<T> {
 
     private isMath(operator: Operator, targetValue: T, value: unknown) {
         switch (operator) {
-            case Operator.IGUAL:
+            case Operator.EQUAL:
                 return isEqual(targetValue, value);
-            case Operator.MENOR:
+            case Operator.LESS_THEN:
                 return false
             // return targetValue < value;
-            case Operator.DIFERENTE:
+            case Operator.DIFFERENT:
                 return !isEqual(targetValue, value);
             default:
                 throw new Error(`Invalid operator: ${operator}`);

@@ -24,7 +24,13 @@ const translation: Translation = {
         different_label: "Diferente",
         greater_than_label: "Maior",
         less_than_label: "Menor",
-        select_lang: "Selecione o idioma"
+        select_lang: "Selecione o idioma",
+        greater_than_or_equal_label: "Maior ou igual",
+        less_than_or_equal_label: "Menor ou igual",
+        contains_label: "Contem",
+        starts_with_label: "Começa com",
+        ends_with_label: "Termina com",
+        negate_label: "Negar"
     }
 }
 

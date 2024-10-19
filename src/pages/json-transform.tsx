@@ -3,7 +3,7 @@ import {z} from "zod";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useRef, useState} from "react";
-import {Button, Divider, Fieldset, FileInput, Flex, Input, Progress, Select} from "@mantine/core";
+import {Button, Checkbox, Divider, Fieldset, FileInput, Flex, Input, Progress, Select} from "@mantine/core";
 import {messages, TranslationKeys} from "@/i18n/locales/tranlation.ts";
 import {useTranslator} from "@/hooks/use-translator.ts";
 import {convertFileSize, generateFileSize, Unit} from "@/lib/unit.ts";
@@ -14,8 +14,8 @@ import {getKeys, getPropertyNames} from "@/lib/objects.ts";
 
 
 const fileUnit: Unit = 'MB'
-// 1GB
-const maxFileSize = generateFileSize(500, fileUnit)
+// 800MB
+const maxFileSize = generateFileSize(800, fileUnit)
 
 
 const operatorKeys = Object.keys(Operator) as Array<Operator>;
@@ -41,6 +41,7 @@ const formSchema = z.object({
         fieldPath: z.string().min(1, messages.field_required_message),
         operator: OperatorSchema,
         value: z.string().min(1, messages.value_required_message),
+        negate: z.boolean().default(false)
     }))
 });
 
@@ -51,9 +52,16 @@ type OperatorTranslator = {
 }
 
 const operatorTranslator: OperatorTranslator[] = [
-    {labelKey: 'equal_label', operator: Operator.IGUAL},
-    {labelKey: 'less_than_label', operator: Operator.MENOR},
-    {labelKey: 'different_label', operator: Operator.DIFERENTE},
+    {labelKey: 'equal_label', operator: Operator.EQUAL},
+    {labelKey: 'less_than_label', operator: Operator.LESS_THEN},
+    {labelKey: 'different_label', operator: Operator.DIFFERENT},
+    {labelKey: "greater_than_label", operator: Operator.GREATER_THAN},
+    {labelKey: "contains_label", operator: Operator.CONTAINS},
+    {labelKey: "starts_with_label", operator: Operator.STARTS_WITH},
+    {labelKey: "ends_with_label", operator: Operator.ENDS_WITH},
+    {labelKey: "less_than_or_equal_label", operator: Operator.LESS_THAN_OR_EQUAL},
+    {labelKey: "greater_than_or_equal_label", operator: Operator.GREATER_THAN_OR_EQUAL},
+
 ]
 
 
@@ -68,15 +76,16 @@ export function JsonTransformPage() {
             items: [
                 {
                     fieldPath: "",
-                    operator: Operator.IGUAL,
+                    operator: Operator.EQUAL,
                     value: "",
+                    negate: false,
                 }
             ],
         },
     });
 
 
-    const {control, handleSubmit, watch, formState: {errors}} = form;
+    const {control, handleSubmit, watch, formState: {errors, isSubmitting}} = form;
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const fileInputRef = useRef<HTMLButtonElement>(null);
     const firstErrorRef = useRef<HTMLDivElement | null>(null);
@@ -92,8 +101,10 @@ export function JsonTransformPage() {
 
     const fileUploaded = watch('jsonFile')
 
-    const onSubmit = (data: FormData) => {
-        const result = SearchEngineFactory.createSearchEngine('JSON').search(createParams(data), fileData)
+
+    const onSubmit = async (data: FormData) => {
+
+        const result = await SearchEngineFactory.createSearchEngine('JSON').search(createParams(data), fileData)
 
         const fileResult: string
             = JSON.stringify(result, null, 4)
@@ -162,10 +173,15 @@ export function JsonTransformPage() {
 
     useEffect(() => {
         const errors = Object.keys(control.getFieldState("items")).length > 0;
+
         if (errors && firstErrorRef.current) {
             firstErrorRef.current.scrollIntoView({behavior: "smooth", block: "center"});
         }
     }, [control]);
+
+    function createItem() {
+        append({fieldPath: "", operator: Operator.EQUAL, value: "", negate: false});
+    }
 
     return (
         <div className="mt-10">
@@ -216,7 +232,7 @@ export function JsonTransformPage() {
                                                         data={getPropertyNames(fileData).map(data => {
                                                             return {
                                                                 value: data.propertyName,
-                                                                label: data.property,
+                                                                label: data.propertyName == data.property ? data.property : `${data.property} (${data.propertyName})`,
                                                             }
                                                         })}
                                                         {...field}
@@ -239,6 +255,13 @@ export function JsonTransformPage() {
                                             </>
                                         )} control={control} name={`items.${i}.operator`}/>
 
+                                        <Controller
+                                            render={({field: {name, ref, onChange, value, onBlur, disabled}}) => (
+                                                <Checkbox label={translate('negate_label')} defaultChecked={value}
+                                                          ref={ref}
+                                                          onChange={onChange} onBlur={onBlur} disabled={disabled}
+                                                          name={name} className={`${getStyleItem(i)} h-full`}/>
+                                            )} control={control} name={`items.${i}.negate`}/>
 
                                         <Controller render={({field}) => (
                                             <Input.Wrapper required w="100%" label={translate('value_label')}
@@ -266,7 +289,7 @@ export function JsonTransformPage() {
                             radius="xl"
                             variant="outline"
                             type="button"
-                            onClick={() => append({fieldPath: "", operator: Operator.IGUAL, value: ""})}
+                            onClick={() => createItem()}
                             className="mt-4 self-end"
                         >
                             {translate('add_item_label')}
@@ -274,7 +297,8 @@ export function JsonTransformPage() {
                     </Flex>
 
                 </Panel>
-                <Button radius="xl" className="mt-2 self-end" variant="filled"
+                <Button loading={isSubmitting} loaderProps={{type: 'dots'}} radius="xl" size="md"
+                        className="my-5 self-end" variant="filled"
                         type="submit">{translate('process_label')}</Button>
             </form>
         </div>
